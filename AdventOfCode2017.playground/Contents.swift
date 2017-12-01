@@ -5,17 +5,14 @@ import UIKit
 let day1input = input("day1input")
 
 func captchaSum(_ text: String, offset by: Int = 1) -> Int {
-    let shifted = Array(text).shiftRight(by).map { String($0) }.joined()
-
-    var sum = 0
-    for (i, char) in text.enumerated() {
-        let index = shifted.index(shifted.startIndex, offsetBy: i)
-        if char == shifted[index],
-            let value = Int(String(char)) {
-            sum += value
+    return text
+        .enumerated()
+        .filter { i, char in
+            let index = text.index(text.startIndex, offsetBy: (i + by) % text.count)
+            return char == text[index]
         }
-    }
-    return sum
+        .flatMap { Int(String($0.element)) }
+        .reduce(0, { $0 + $1 })
 }
 
 // part 1
@@ -36,3 +33,4 @@ assert(captchaSum("123123", offset: 3) == 12)
 assert(captchaSum("12131415", offset: 4) == 4)
 
 captchaSum(day1input, offset: day1input.count / 2)
+
