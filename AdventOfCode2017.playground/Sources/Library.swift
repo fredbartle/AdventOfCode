@@ -10,3 +10,9 @@ public func input(_ filename: String) -> String {
     }
 
 }
+
+public func parse(_ input: String) -> [[Int]] {
+    return input
+        .components(separatedBy: .newlines)
+        .map { $0.split(separator: " ").flatMap { Int($0) } }
+}
