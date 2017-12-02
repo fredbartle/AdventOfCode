@@ -2,35 +2,26 @@
 
 import UIKit
 
-let day1input = input("day1input")
+let sample = """
+5 1 9 5
+7 5 3
+2 4 6 8
+"""
 
-func captchaSum(_ text: String, offset by: Int = 1) -> Int {
-    return text
-        .enumerated()
-        .filter { i, char in
-            let index = text.index(text.startIndex, offsetBy: (i + by) % text.count)
-            return char == text[index]
-        }
-        .flatMap { Int(String($0.element)) }
-        .reduce(0, { $0 + $1 })
+let day2input = input("day2input")
+
+func parse(_ input: String) -> [[Int]] {
+    return input
+        .components(separatedBy: .newlines)
+        .map { $0.split(separator: " ").flatMap { Int($0) } }
 }
 
-// part 1
+func checksum(data: [[Int]]) -> Int {
+    return data.map { $0.max()! - $0.min()! }.reduce(0, +)
+}
 
-assert(captchaSum("1122") == 3)
-assert(captchaSum("1111") == 4)
-assert(captchaSum("1234") == 0)
-assert(captchaSum("91212129") == 9)
+let sampleData = parse(sample)
+assert(checksum(data: sampleData) == 18)
 
-captchaSum(day1input)
-
-// part 2
-
-assert(captchaSum("1212", offset: 2) == 6)
-assert(captchaSum("1221", offset: 2) == 0)
-assert(captchaSum("123425", offset: 3) == 4)
-assert(captchaSum("123123", offset: 3) == 12)
-assert(captchaSum("12131415", offset: 4) == 4)
-
-captchaSum(day1input, offset: day1input.count / 2)
-
+let day2data = parse(day2input)
+checksum(data: day2data)
