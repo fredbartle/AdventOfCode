@@ -19,39 +19,31 @@ func distance(to position: Complex) -> Double {
 func findPosition(of target: Int) -> Complex {
     guard target > 1 else { return Complex(0, 0) }
 
-    var starting = 1
+    var start = 1
     var n = 0
     while true {
         let next = (0...n).map { max($0 * 8, 1) }.reduce(0, +) + 1
         if target < next {
             break
         }
-        starting = next
+        start = next
         n += 1
     }
-    starting
-    n
-    let se = starting
-    let ne = se + n * 2 - 1
-    let nw = ne + n * 2
-    let sw = nw + n * 2
 
-    let x: Int
-    let y: Int
-    if target <= ne {
-        x = n
-        y = -(n - 1) + target - se
-    } else if target <= nw {
-        x = n - (target - ne)
-        y = n
-    } else if target <= sw {
-        x = -n
-        y = n - (target - nw)
-    } else {
-        x = -n + (target - sw)
-        y = -n
+    var position = Complex(n, -n + 1)
+    var direction: Direction = .Up
+    var corner = start - 1
+    var value = start
+    while target != value {
+        if value == corner + n * 2 {
+            direction = direction.next()
+            corner = value
+        }
+        value += 1
+        position += direction.vector
     }
-    return Complex(x, y)
+
+    return position
 }
 
 assert(distance(to: findPosition(of: 1)) == 0)
