@@ -24,6 +24,11 @@ extension Complex {
         self.y = imagine
     }
 
+    public init(_ x: Int, _ y: Int) {
+        self.x = Double(x)
+        self.y = Double(y)
+    }
+
     public init (real: Double) {
         self.init(real, 0)
     }
