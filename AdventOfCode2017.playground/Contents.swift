@@ -1,5 +1,7 @@
 /*
 
+ part 1
+
  17  16  15  14  13
  18   5   4   3  12
  19   6   1   2  11
@@ -50,5 +52,39 @@ assert(distance(to: findPosition(of: 1)) == 0)
 assert(distance(to: findPosition(of: 12)) == 3)
 assert(distance(to: findPosition(of: 23)) == 2)
 assert(distance(to: findPosition(of: 1024)) == 31)
+
+// 438
 distance(to: findPosition(of: 265149))
 
+// part2
+
+func neighbors(of position: Complex) -> [Complex] {
+    return [
+        position + Direction.Up.vector + Direction.Left.vector,
+        position + Direction.Up.vector,
+        position + Direction.Up.vector + Direction.Right.vector,
+        position + Direction.Right.vector,
+        position + Direction.Down.vector + Direction.Right.vector,
+        position + Direction.Down.vector,
+        position + Direction.Down.vector + Direction.Left.vector,
+        position + Direction.Left.vector,
+    ]
+}
+
+func findNextSum(for target: Int) -> Int {
+    let origin = Complex(0, 0)
+
+    var matrix: [Complex: Int] = [origin: 1]
+    var n = 2
+    var sum = 1
+    while target > sum {
+        let position = findPosition(of: n)
+        sum = neighbors(of: position).flatMap { matrix[$0] }.reduce(0, +)
+        matrix[position] = sum
+        n += 1
+    }
+    return sum
+}
+
+//266330
+findNextSum(for: 265149)
