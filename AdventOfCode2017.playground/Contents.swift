@@ -29,17 +29,15 @@
 
  */
 
-// Day 5 part 1
-
 func process(_ instructions: [Int]) -> Int {
     var instructions = instructions
     var n = 0
     var count = 0
 
     while n >= 0 && n < instructions.count {
-        let value = instructions[n]
+        let jump = instructions[n]
         instructions[n] += 1
-        n = n + value
+        n = n + jump
         count += 1
     }
 
@@ -61,4 +59,37 @@ let day5input = input("day5input")
 let instructions = parse(day5input).flatMap { $0 }
 
 // 388611
-process(instructions)
+//process(instructions)
+
+/*
+
+ --- Part Two ---
+
+ Now, the jumps are even stranger: after each jump, if the offset was three or more, instead decrease it by 1. Otherwise, increase it by 1 as before.
+
+ Using this rule with the above example, the process now takes 10 steps, and the offset values after finding the exit are left as 2 3 2 3 -1.
+
+ How many steps does it now take to reach the exit?
+
+ */
+
+
+func process2(_ instructions: [Int]) -> Int {
+    var instructions = instructions
+    var n = 0
+    var count = 0
+
+    while n >= 0 && n < instructions.count {
+        let jump = instructions[n]
+        let modifier = jump < 3 ? 1 : -1
+        instructions[n] += modifier
+        n = n + jump
+        count += 1
+    }
+
+    return count
+}
+
+assert(process2(testInstructions) == 10)
+
+// 0
