@@ -1,60 +1,64 @@
 /*
 
- Day 4 part 1
+ --- Day 5: A Maze of Twisty Trampolines, All Alike ---
 
- aa bb cc dd ee is valid.
- aa bb cc dd aa is not valid - the word aa appears more than once.
- aa bb cc dd aaa is valid - aa and aaa count as different words.
+ An urgent interrupt arrives from the CPU: it's trapped in a maze of jump instructions, and it would like assistance from any programs with spare cycles to help find the exit.
 
- */
+ The message includes a list of the offsets for each jump. Jumps are relative: -1 moves to the previous instruction, and 2 skips the next one. Start at the first instruction in the list. The goal is to follow the jumps until one leads outside the list.
 
-let day4input = input("day4input")
-let passphraseList = day4input.components(separatedBy: .newlines)
+ In addition, these instructions are a little strange; after each jump, the offset of that instruction increases by 1. So, if you come across an offset of 3, you would move three instructions forward, but change it to a 4 for the next time it is encountered.
 
-func validPassphrase1(_ text: String) -> Bool {
-    let array = text.components(separatedBy: .whitespaces).sorted()
-    let unique = Array(Set(array)).sorted()
-    return array == unique
-}
+ For example, consider the following list of jump offsets:
 
-func validateList1(_ list: [String]) -> Int {
-    return list.filter { validPassphrase1($0) }.count
-}
+ 0
+ 3
+ 0
+ 1
+ -3
+ Positive jumps ("forward") move downward; negative jumps move upward. For legibility in this example, these offset values will be written all on one line, with the current instruction marked in parentheses. The following steps would be taken before an exit is found:
 
-assert(validPassphrase1("aa bb cc dd ee"))
-assert(!validPassphrase1("aa bb cc dd aa"))
-assert(validPassphrase1("aa bb cc dd aaa"))
+ (0) 3  0  1  -3  - before we have taken any steps.
+ (1) 3  0  1  -3  - jump with offset 0 (that is, don't jump at all). Fortunately, the instruction is then incremented to 1.
+ 2 (3) 0  1  -3  - step forward because of the instruction we just modified. The first instruction is incremented again, now to 2.
+ 2  4  0  1 (-3) - jump all the way to the end; leave a 4 behind.
+ 2 (4) 0  1  -2  - go back to where we just were; increment -3 to -2.
+ 2  5  0  1  -2  - jump 4 steps forward, escaping the maze.
+ In this example, the exit is reached in 5 steps.
 
-// 451
-validateList1(passphraseList)
-
-/*
-
- Day 4 part 2
-
- abcde fghij is a valid passphrase.
- abcde xyz ecdab is not valid - the letters from the third word can be rearranged to form the first word.
- a ab abc abd abf abj is a valid passphrase, because all letters need to be used when forming another word.
- iiii oiii ooii oooi oooo is valid.
- oiii ioii iioi iiio is not valid - any of these words can be rearranged to form any other word.
+ How many steps does it take to reach the exit?
 
  */
 
-func validPassphrase2(_ text: String) -> Bool {
-    let array = text.components(separatedBy: .whitespaces).map { String($0.sorted()) }.sorted()
-    let unique = Array(Set(array)).sorted()
-    return array == unique
+// Day 5 part 1
+
+func process(_ instructions: [Int]) -> Int {
+    var instructions = instructions
+    var n = 0
+    var count = 0
+
+    while n >= 0 && n < instructions.count {
+        let value = instructions[n]
+        instructions[n] += 1
+        n = n + value
+        count += 1
+    }
+
+    return count
 }
 
-func validateList2(_ list: [String]) -> Int {
-    return list.filter { validPassphrase2($0) }.count
-}
+let testInput = """
+0
+3
+0
+1
+-3
+"""
 
-assert(validPassphrase2("abcde fghij"))
-assert(!validPassphrase2("abcde xyz ecdab"))
-assert(validPassphrase2("a ab abc abd abf abj"))
-assert(validPassphrase2("iiii oiii ooii oooi oooo"))
-assert(!validPassphrase2("oiii ioii iioi iiio"))
+let testInstructions = parse(testInput).flatMap { $0 }
+assert(process(testInstructions) == 5)
 
-// 223
-validateList2(passphraseList)
+let day5input = input("day5input")
+let instructions = parse(day5input).flatMap { $0 }
+
+// 388611
+process(instructions)
